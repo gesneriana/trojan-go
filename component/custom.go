@@ -1,5 +1,3 @@
-// +build custom full
-
 package build
 
 import (

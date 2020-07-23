@@ -1,5 +1,3 @@
-// +build client full mini
-
 package build
 
 import (

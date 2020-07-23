@@ -24,13 +24,7 @@ func SHA224String(password string) string {
 	return str
 }
 
-var ProgramDir string
-
 func GetProgramDir() string {
-	if len(ProgramDir) > 0 {
-		return ProgramDir
-	}
-
 	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		log.Fatal(err)

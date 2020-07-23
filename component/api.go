@@ -1,5 +1,3 @@
-// +build api full
-
 package build
 
 import (

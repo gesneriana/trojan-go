@@ -27,7 +27,3 @@ func PopOptionHandler() (Handler, error) {
 	delete(handlers, maxHandler.Name())
 	return maxHandler, nil
 }
-
-func HandlersCount() int {
-	return len(handlers)
-}

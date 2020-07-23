@@ -1,5 +1,3 @@
-// +build other full
-
 package build
 
 import (

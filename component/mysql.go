@@ -1,5 +1,3 @@
-// +build mysql full mini
-
 package build
 
 import (

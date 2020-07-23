@@ -1,5 +1,3 @@
-// +build forward full mini
-
 package build
 
 import (

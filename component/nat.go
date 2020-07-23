@@ -1,5 +1,3 @@
-// +build nat full mini
-
 package build
 
 import (
