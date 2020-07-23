@@ -10,6 +10,8 @@ import (
 	"github.com/p4gefau1t/trojan-go/option"
 )
 
+var _proxy *Proxy
+
 type Option struct {
 	path *string
 }
@@ -33,6 +35,7 @@ func (o *Option) Handle() error {
 	}
 	log.Info("trojan-go", constant.Version, "initializing")
 	proxy, err := NewProxyFromConfigData(data, isJSON)
+	_proxy = proxy
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,4 +54,14 @@ func init() {
 	option.RegisterHandler(&Option{
 		path: flag.String("config", "config.json", "Trojan-Go config filename (.yaml/.json)"),
 	})
+}
+
+func (o *Option) SetConfigJsonPath(configPath string) {
+	o.path = &configPath
+}
+
+func (o *Option) Close() {
+	if _proxy != nil {
+		_proxy.Close()
+	}
 }
