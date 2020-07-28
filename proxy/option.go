@@ -129,5 +129,3 @@ func (o *Option) Close() {
 		_proxy.Close()
 	}
 }
-
-
