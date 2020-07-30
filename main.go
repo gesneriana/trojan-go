@@ -77,10 +77,25 @@ func Stop() {
 	}
 }
 
+// Tun2socksStartOptions is tun2socks.Tun2socksStartOptions
+type Tun2socksStartOptions struct {
+	TunFd        int
+	Socks5Server string
+	FakeIPRange  string
+	MTU          int
+	EnableIPv6   bool
+}
+
 // StartTun sets up lwIP stack, starts a Tun2socks instance
 //export StartTun
-func StartTun(opt *tun2socks.Tun2socksStartOptions) int {
-	return tun2socks.Start(opt)
+func StartTun(opt *Tun2socksStartOptions) int {
+	var tunopt = &tun2socks.Tun2socksStartOptions{}
+	tunopt.EnableIPv6 = opt.EnableIPv6
+	tunopt.FakeIPRange = opt.FakeIPRange
+	tunopt.MTU = opt.MTU
+	tunopt.Socks5Server = opt.Socks5Server
+	tunopt.TunFd = opt.TunFd
+	return tun2socks.Start(tunopt)
 }
 
 // StopTun stop tun
