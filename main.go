@@ -1,20 +1,16 @@
-package main
+package trojangolib
 
-/*
-#include <stdio.h>
-#include <stdlib.h>
-*/
-import "C"
 import (
-	"encoding/base64"
+	"net"
 	"runtime"
 	"sync/atomic"
 
 	"github.com/p4gefau1t/trojan-go/common"
+	_ "github.com/p4gefau1t/trojan-go/component"
 	"github.com/p4gefau1t/trojan-go/log"
 	"github.com/p4gefau1t/trojan-go/option"
 	"github.com/p4gefau1t/trojan-go/proxy"
-	_ "github.com/p4gefau1t/trojan-go/component"
+	"github.com/p4gefau1t/trojan-go/tun2socks"
 )
 
 func main() {
@@ -24,16 +20,9 @@ func main() {
 var reentrance int64
 var _proxy *proxy.Option
 
-// Start 启动代理服务,设置可读写的配置文件的目录
+// Start trojan proxy, set config dir
 //export Start
-func Start(b64 *C.char) {
-	var b64String = C.GoString(b64)
-	decodeBytes, err := base64.StdEncoding.DecodeString(b64String)
-	if err != nil {
-		log.Info(b64String)
-		log.Error(err)
-		return
-	}
+func Start(configDir string) {
 
 	go func() {
 		if atomic.CompareAndSwapInt64(&reentrance, 0, 1) {
@@ -44,7 +33,6 @@ func Start(b64 *C.char) {
 			return
 		}
 
-		var configDir = string(decodeBytes)
 		common.ProgramDir = configDir
 		var configFile = configDir + "/config.json"
 		// jni 调用golib只会执行一次初始化, 所以再次启动需要手动初始化
@@ -81,7 +69,7 @@ func Start(b64 *C.char) {
 
 }
 
-// Stop 停止客户端代理服务
+// Stop trojan proxy
 //export Stop
 func Stop() {
 	if _proxy != nil {
@@ -89,15 +77,36 @@ func Stop() {
 	}
 }
 
-var platString *C.char
+// StartTun sets up lwIP stack, starts a Tun2socks instance
+//export StartTun
+func StartTun(opt *tun2socks.Tun2socksStartOptions) int {
+	return tun2socks.Start(opt)
+}
 
-// GetPlatformInfo 获取系统平台
-//export GetPlatformInfo
-func GetPlatformInfo() *C.char {
-	if platString != nil {
-		return platString
+// StopTun stop tun
+//export StopTun
+func StopTun() {
+	tun2socks.Stop()
+}
+
+// GetFreePort asks the kernel for a free open port that is ready to use.
+//export GetFreePort
+func GetFreePort() (int, error) {
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:0")
+	if err != nil {
+		return 0, err
 	}
 
-	platString = C.CString(runtime.GOOS + " " + runtime.GOARCH)
-	return platString
+	l, err := net.ListenTCP("tcp", addr)
+	if err != nil {
+		return 0, err
+	}
+	defer l.Close()
+	return l.Addr().(*net.TCPAddr).Port, nil
+}
+
+// GetPlatformInfo get system pltform
+//export GetPlatformInfo
+func GetPlatformInfo() string {
+	return runtime.GOOS + " " + runtime.GOARCH
 }

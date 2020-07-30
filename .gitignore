@@ -6,3 +6,5 @@
 /trojangolib.aar
 /trojangolib-sources.jar
 *.so
+golibs-sources.jar
+golibs.aar
