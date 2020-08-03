@@ -8,7 +8,7 @@
 ## 构建
 
 确保你的Go版本 >= 1.14，推荐使用snap安装Go保持与上游同步。
-请按照Android SDK, NDK, gomobile, JAVA JDK
+请先安装Android SDK, NDK, gomobile, JAVA JDK等开发环境
 
 下面的命令使用gomobile进行编译
 
